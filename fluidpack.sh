@@ -24,6 +24,8 @@ APP_SUPPORT="$HOME/Library/Application Support/Fluid/FluidApps/${FLUID_BROWSER_N
 
 PREFS="$HOME/Library/Preferences/com.fluidapp.FluidApp.${FLUID_BROWSER_NAME}.plist"
 
+FULL_SAVE_TO="$SAVE_TO/$FLUID_BROWSER_NAME.$NAME.tar.bz2"
+
 for i in "$FULL_APP_PATH" "$APP_SUPPORT" "$PREFS"
 do
 	if [ ! -e "$i" ]
@@ -33,9 +35,21 @@ do
 	fi
 done
 
-tar -c -j -P -v -f "$SAVE_TO/$FLUID_BROWSER_NAME.$NAME.tar.bz2" "$FULL_APP_PATH:h:h:h" "$APP_SUPPORT" "$PREFS"
+tar -c -j -P -v -f "$FULL_SAVE_TO" "$FULL_APP_PATH:h:h:h" "$APP_SUPPORT" "$PREFS"
 
+EXIT="$?"
 
-exit
+if [ "$EXIT" = "0" ]
+then
+	echo "$NAME: Successfully created $FULL_SAVE_TO"
+
+		# Reveal the file in Finder
+	open -R "$FULL_SAVE_TO"
+	exit 0
+else
+	echo "$NAME: Failed trying to create $FULL_SAVE_TO (\$EXIT = $EXIT)"
+	exit 1
+fi
+
 #
 #EOF
